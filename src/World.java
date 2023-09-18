@@ -28,7 +28,7 @@ public class World {
 	//Block Images
 	private BufferedImage BLOCK_SOL, BLOCK_SOL_TOP, BLOCK_SKY, BLOCK_STAGE1, BLOCK_STAGE2, BLOCK_STAGE3, BLOCK_BARRE;
 	
-	private int x, y, xDirection, yDirection;
+	int x, y, xDirection, yDirection;
 	
 	// Map navihation
 	static final int PAN_UP = 0, PAN_DOWN = 1, PAN_LEFT = 2, PAN_RIGHT = 3;
@@ -95,11 +95,6 @@ public class World {
 				isSolid[i] = true;
 				blocks[i] = new Rectangle(x, y, 32, 32);
 			}
-			
-			if(blocks[i] == null) {
-				print("null "+i+" "+x+" "+y);
-				System.exit(0);
-			}
 			x += 32;
 		}
 		for (int i=0; i<19; i++) topImage[i] = true;
@@ -165,6 +160,7 @@ public class World {
 			yDirection = 0;
 		}
 		else yDirection = 0;
+		
 	}
 	
 	public void navigateMap(int nav){
