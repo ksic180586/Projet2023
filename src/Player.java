@@ -4,8 +4,9 @@ import java.awt.Rectangle;
 
 import javax.swing.ImageIcon;
 
-public class Player {
+public class Player extends Thread{
 	private World world;
+	private volatile boolean running = true;
 	
 	private Rectangle playerRect;
 	private Image playerImg;
@@ -30,9 +31,21 @@ public class Player {
 		if(world.blocks[18].y + d >= 0) yDirection = d;
 		else yDirection = 0;
 	}
-	public void update(){
-		move();
-		checkForCollision();
+	public void run(){
+		if(!topSpawn) setXDirection(1);
+		topSpawn = true;
+		print(world.blocks.length+" "+iEtage);
+		while(running) {
+			move();
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			print(world.blocks.length+" "+iEtage);
+			checkForCollision();
+		}
 	}
 	
 	public void print(String s) {

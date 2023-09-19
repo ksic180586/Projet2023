@@ -38,11 +38,12 @@ public class GamePanel extends JPanel implements Runnable{
 	
 	//Game Objects
 	World world;
-	Player p1;
+	Player p1[] = new Player[5];
+	int iPlayer;
 	
 	public GamePanel(){
 		world = new World();
-		p1 = new Player(world);
+		for(int i=0; i<5; i++) p1[i] = new Player(world);
 		
 		setPreferredSize(gameDim);
 		setBackground(Color.WHITE);
@@ -56,7 +57,8 @@ public class GamePanel extends JPanel implements Runnable{
 			}
 			@Override
 			public void mousePressed(MouseEvent e){
-				p1.addHero();
+				if(iPlayer<1) p1[iPlayer].start();
+				iPlayer++;
 				isMousePressed = true;
 				// Démarrer un timer pour détecter le maintien du clic
 		        Timer timer = new Timer(1, new ActionListener() {
@@ -64,7 +66,8 @@ public class GamePanel extends JPanel implements Runnable{
 		            public void actionPerformed(ActionEvent e) {
 		                if (isMousePressed) {
 		                	world.setYDirection(ySpeed);
-		    	            p1.setYDirection(ySpeed);
+		                	p1[0].setYDirection(ySpeed);
+		                	p1[1].setYDirection(ySpeed);
 		                }
 		            }
 		        });
@@ -74,7 +77,8 @@ public class GamePanel extends JPanel implements Runnable{
 			@Override
 			public void mouseReleased(MouseEvent e){
 				world.setYDirection(0);
-				p1.setYDirection(0);
+				p1[0].setYDirection(0);
+				p1[1].setYDirection(0);
 				isMousePressed = false;
 			}
 			@Override
@@ -182,8 +186,6 @@ public class GamePanel extends JPanel implements Runnable{
 	private void gameUpdate(){
 		if (running && game != null){
 			world.moveMap();
-			p1.update();
-			
 		}
 	}
 
@@ -209,7 +211,8 @@ public class GamePanel extends JPanel implements Runnable{
 	/* Draw all game content in this method */
 	private void draw(Graphics g) {
 		world.draw(g);
-		p1.draw(g);
+		p1[0].draw(g);
+		p1[1].draw(g);
 	}
 	
 	private void paintScreen(){
