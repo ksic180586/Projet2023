@@ -3,8 +3,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 public class GamePanel extends JPanel implements Runnable{
 
@@ -33,6 +34,7 @@ public class GamePanel extends JPanel implements Runnable{
 	private static final int DELAYS_BEFORE_YIELD = 10;
 	private static int previousY;
 	private int ySpeed;
+	private static boolean isMousePressed = false;
 	
 	//Game Objects
 	World world;
@@ -47,41 +49,6 @@ public class GamePanel extends JPanel implements Runnable{
 		setFocusable(true);
 		requestFocus();
 		//Handle all key inputs from user
-		addKeyListener(new KeyAdapter(){
-			public void keyPressed(KeyEvent e){
-				if (e.getKeyCode() == KeyEvent.VK_LEFT){
-					p1.setXDirection(-1);
-				}
-				if (e.getKeyCode() == KeyEvent.VK_RIGHT){
-					p1.setXDirection(+1);
-				}
-				if (e.getKeyCode() == KeyEvent.VK_DOWN){
-//					p1.setYDirection(1);
-					world.setYDirection(-1);
-				}
-				if (e.getKeyCode() == KeyEvent.VK_UP){
-					p1.setYDirection(-1);
-				}
-			}
-			public void keyReleased(KeyEvent e){
-				world.stopMoveMap();
-				if (e.getKeyCode() == KeyEvent.VK_LEFT){
-					p1.setXDirection(0);
-				}
-				if (e.getKeyCode() == KeyEvent.VK_RIGHT){
-					p1.setXDirection(0);
-				}
-				if (e.getKeyCode() == KeyEvent.VK_DOWN){
-					p1.setYDirection(0);
-				}
-				if (e.getKeyCode() == KeyEvent.VK_UP){
-					p1.setYDirection(0);
-				}
-			}
-			public void keyTyped(KeyEvent e){
-				
-			}
-		});
 		addMouseListener(new  MouseAdapter() {
 			@Override
 			public void mouseMoved(MouseEvent e){
@@ -89,22 +56,34 @@ public class GamePanel extends JPanel implements Runnable{
 			}
 			@Override
 			public void mousePressed(MouseEvent e){
-				p1.mousePressed(e);
+				p1.addHero();
+				isMousePressed = true;
+				// Démarrer un timer pour détecter le maintien du clic
+		        Timer timer = new Timer(1, new ActionListener() {
+		            @Override
+		            public void actionPerformed(ActionEvent e) {
+		                if (isMousePressed) {
+		                	world.setYDirection(ySpeed);
+//		    	            p1.setYDirection(ySpeed);
+		                }
+		            }
+		        });
+		        timer.setRepeats(true); // Exécution unique
+		        timer.start();
 			}
 			@Override
 			public void mouseReleased(MouseEvent e){
 				world.setYDirection(0);
+				p1.setYDirection(0);
+				isMousePressed = false;
 			}
 			@Override
 			public void mouseClicked(MouseEvent e){
 				
 			}
 		});
+		
 		addMouseMotionListener(new MouseAdapter() {
-			@Override
-			public void mouseMoved(MouseEvent e){
-				p1.mouseMoved(e);
-			}
 			@Override
 			public void mouseDragged(MouseEvent e){
 				int y = e.getY();
@@ -113,14 +92,7 @@ public class GamePanel extends JPanel implements Runnable{
 	            } else if (y < previousY) {
 	            	if(-10<ySpeed) ySpeed--;
 	            }
-	            world.setYDirection(ySpeed);
 	            previousY = y;
-			}
-			@Override
-			public void mouseEntered(MouseEvent e){
-			}
-			@Override
-			public void mouseExited(MouseEvent e){
 			}
 		});
 		addMouseWheelListener(new MouseWheelListener() {
@@ -133,6 +105,8 @@ public class GamePanel extends JPanel implements Runnable{
 					if(-10<ySpeed) ySpeed--;
 				}
 				world.setYDirection(ySpeed);
+				
+				
 			}
 		});
 	}
@@ -201,17 +175,6 @@ public class GamePanel extends JPanel implements Runnable{
 			else{
 				overSleepTime = 0;
 			}
-			// Print out game stats
-			/*
-			log(
-			"beforeTime:     " + beforeTime + "\n" + 
-			"afterTime:      " + afterTime + "\n" + 
-			"diff:           " + diff + "\n" +
-			"SleepTime:      " + sleepTime / 1000000L + "\n" +
-			"overSleepTime:  " + overSleepTime / 1000000L + "\n" +
-			"delays:         " + delays + "\n" 
-			);
-			*/
 		}
 		
 	}

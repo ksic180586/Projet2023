@@ -8,9 +8,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
-import java.awt.image.LookupOp;
 import java.awt.image.RescaleOp;
-import java.awt.image.ShortLookupTable;
 import java.io.File;
 import java.io.IOException;
 
@@ -28,10 +26,7 @@ public class World {
 	//Block Images
 	private BufferedImage BLOCK_SOL, BLOCK_SOL_TOP, BLOCK_SKY, BLOCK_STAGE1, BLOCK_STAGE2, BLOCK_STAGE3, BLOCK_BARRE;
 	
-	int x, y, xDirection, yDirection;
-	
-	// Map navihation
-	static final int PAN_UP = 0, PAN_DOWN = 1, PAN_LEFT = 2, PAN_RIGHT = 3;
+	int x, y, yDirection;
 	
 	public World(){
 		
@@ -136,77 +131,21 @@ public class World {
 		}	
 	}
 	public void moveMap(){
-		for (Rectangle r : blocks){
-			r.x += xDirection;
-			r.y += yDirection;
-		}
-		
+		for (Rectangle r : blocks) r.y += yDirection;
 	}
 	
 	public void stopMoveMap(){
-		setXDirection(0);
 		setYDirection(0);
 	}
 	
-	private void setXDirection(int dir){
-		xDirection = dir;
-	}
-	
 	public void setYDirection(int dir){
-		if(blocks[18].y +dir >= 0) yDirection = dir;
-		else if(blocks[18].y<0) {
-			yDirection = -blocks[18].y;
-			moveMap();
-			yDirection = 0;
-		}
+		// blocks[18] est le 3e étage en partant du bas
+		if(blocks[18].y + dir >= 0) yDirection = dir;
 		else yDirection = 0;
-		
-	}
-	
-	public void navigateMap(int nav){
-		
-		switch(nav){
-			default:
-				System.out.println("default case entered... Doing nothing.");
-				break;
-			case PAN_UP:
-				setYDirection(-1);
-				break;
-			case PAN_DOWN:
-				setYDirection(1);
-				break;
-			case PAN_LEFT:
-				setXDirection(-1);
-				break;
-			case PAN_RIGHT:
-				setXDirection(1);
-				break;
-				
-				
-				
-		}
 	}
 	
 	public void destroyBlock(int blockNum) {
 		blocks[blockNum] = new Rectangle(-100, -100, 0, 0);
 		isSolid[blockNum] = false;
-	}
-}
-
-class LookupFabrique {
-	static short[] clair = new short[256];
-	static short[] meilleurClair = new short[256];
-	static {
-		for (int i = 0; i < 256; i++) {
-			clair[i] = (short)(128 + i / 2);
-			meilleurClair[i] = (short)(Math.sqrt((double)i / 255.0) * 255.0);
-		}
-	}
-	static LookupOp createClair() {
-		return new LookupOp(new ShortLookupTable(0, clair), null);
-	}
-	static LookupOp createMeilleurClair() {
-		return new LookupOp(
-				new ShortLookupTable(0, meilleurClair), null);
 	}
 }
