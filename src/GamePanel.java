@@ -64,7 +64,7 @@ public class GamePanel extends JPanel implements Runnable{
 		            public void actionPerformed(ActionEvent e) {
 		                if (isMousePressed) {
 		                	world.setYDirection(ySpeed);
-//		    	            p1.setYDirection(ySpeed);
+		    	            p1.setYDirection(ySpeed);
 		                }
 		            }
 		        });

@@ -27,7 +27,8 @@ public class Player {
 	}
 	
 	public void setYDirection(int d){
-		yDirection = d;
+		if(world.blocks[18].y + d >= 0) yDirection = d;
+		else yDirection = 0;
 	}
 	public void update(){
 		move();
@@ -46,7 +47,12 @@ public class Player {
 		if(playerRect.y <= world.blocks[iEtage-1].y+3*32) {
 			yAutoDirection = 0;
 			yAutoDirection2 = -1;
+			iEtage--;
+			if(iEtage%2 == 1) setXDirection(-1);
+			else setXDirection(1);
+			topMonter = false;
 		}
+		
 		// monte echelle
 		yAutoDirection2 += yAutoDirection;
 		if(Math.ceil(yAutoDirection2) == -2) {
@@ -54,7 +60,8 @@ public class Player {
 			yAutoDirection2 += 1;
 		}
 		// etage bloque vers droite puis monte echelle 
-		if(playerRect.x >= world.blocks[iEtage].x+9*32) {
+		if((iEtage%2 == 0 && playerRect.x >= world.blocks[iEtage].x+9*32) ||
+				(iEtage%2 == 1 && playerRect.x <= world.blocks[iEtage].x+32)){
 			xDirection = 0;
 			if(!topMonter) {
 				yAutoDirection = -0.7f;
